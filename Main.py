@@ -41,7 +41,7 @@ if user_option == "new":
             print('We can always use somebody to help in the office. ')
     else:
     print('Sorry you are not of the correct age to become a spy.') #entered age is not between 12 and 50
-    print('Authentication Complete. We are glad to have you with us. Welcome '+spy_salutation+'.'+spy_name+", Your sp rating is "+str(spy_rating)) #float value to string value
+    print('Authentication Complete. We are glad to have you with us. Welcome '+spy_salutation+'.'+spy_name+","Having age "+str(spy_age)+".Your spy rating is "+str(spy_rating)) #float value to string value
     spy_is_online = True
     print('Changing the status of spy from offline to online '+str(spy_is_online)) #bool value to string value for concatenation
 elif user_option=='default':
