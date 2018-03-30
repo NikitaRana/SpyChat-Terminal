@@ -17,36 +17,56 @@
 # Code for lecture 2 of Spychat dated 21st March 2018
 #-------------------------------------------------------------------------------------------------
 from Spy_details import Default_user #calling default user details
+def add_status_message(current_status):
+    if current_status!=None :
+        print("Your current status is"+current_status+"\n")
+    else:
+        print("You don't have any status message currently \n")
+
+    default_value = raw_input("Would you like to set from your older statuses? (Y/N)")
+    if default_value.upper()=='N':
+        new_status_message = raw_input("What status message do you want to set")
+        if len(new_status_message)>0:
+            updated_status_message = new_status_message
+            STATUS_MESSAGE.append(updated_status_message)
+            print(STATUS_MESSAGE)
+
+#-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 def start_chat(spy_name, spy_age, spy_rating): #currently not using the parameters
-    continue_option = "Y"
-    while(continue_option=='Y' or continue_option=='y'):
+    current_status_message = None
+    show_menu = True
+    while show_menu:
         menu_option = int ( raw_input ("What would you like to do \n 1. Add a status update \n 2. Add a friend \n 3. Send a secret message \n 4. Read a secret message \n 5. Read chats from a user \n 6. Close the application" ) )
-        while(menu_option<=6):
-            if menu_option==1:
-                print("Status update")
-                break
-            elif menu_option==2:
-                print("Adding a friend initiated......")
-                break
-            elif menu_option==3:
-                print("Send a secret message initiated......")
-                break
-            elif menu_option==4:
-                print("Read a secret message initiated......")
-                break
-            elif menu_option==5:
-                print("Reading chat from user")
-                break
-            else:
-                print("Exiting now.....")
-        continue_option = raw_input("Would you like to perform another operation (Y/N)")
-    print("Thank you for your time")
+        if menu_option==1:
+            add_status_message("Coding") #check the parameters
+
+            break
+        elif menu_option==2:
+            print("Adding a friend initiated......")
+            break
+        elif menu_option==3:
+            print("Send a secret message initiated......")
+            break
+        elif menu_option==4:
+            print("Read a secret message initiated......")
+            break
+        elif menu_option==5:
+            print("Reading chat from user")
+            break
+        elif menu_option==6:
+            print("Exiting now.....")
+            show_menu = False
+        else:
+            print("Invalid Option select from 1 to 6")
+
 
 spy_is_online = False #status of the spy
 user_option = raw_input("Would you like to continue as a default user (default) or create your own (new)? ") #type of user
+
 #-------------------------------------------------------------------------------------------------
 # for creating new user
 #-------------------------------------------------------------------------------------------------
+
 if user_option == "new":
     spy_name = raw_input("Welcome to SpyChat, you must tell me you Spyname first:" )
     if len ( spy_name ) > 0: #to calculate the length of the string
@@ -72,9 +92,11 @@ if user_option == "new":
     spy_is_online = True
     print('Changing the status of spy from offline to online '+str(spy_is_online)) #bool value to string value for concatenation
     start_chat(spy_name,spy_age,spy_rating) # calling menu option
+
 #-----------------------------------------------------------------------------------------------------------------------
 # for continuing as a default user
 #-----------------------------------------------------------------------------------------------------------------------
+
 elif user_option=='default':
     print('Authentication Complete. We are glad to have you with us. Welcome ' + Default_user().spy_salutation + '.' + Default_user().spy_name + ", Your sp rating is " + str(Default_user().spy_rating))  # float value to string value
     spy_is_online = True
