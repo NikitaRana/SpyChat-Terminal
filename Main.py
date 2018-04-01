@@ -39,7 +39,6 @@ def start_chat(spy_name, spy_age, spy_rating): #currently not using the paramete
         menu_option = int ( raw_input ("What would you like to do \n 1. Add a status update \n 2. Add a friend \n 3. Send a secret message \n 4. Read a secret message \n 5. Read chats from a user \n 6. Close the application" ) )
         if menu_option==1:
             add_status_message("Coding") #check the parameters
-
             break
         elif menu_option==2:
             print("Adding a friend initiated......")
@@ -62,6 +61,13 @@ def start_chat(spy_name, spy_age, spy_rating): #currently not using the paramete
 
 spy_is_online = False #status of the spy
 user_option = raw_input("Would you like to continue as a default user (default) or create your own (new)? ") #type of user
+
+#-------------------------------------------------------------------
+def select_friend():
+    item_number = 0
+    for friend in friends:
+        print()
+
 
 #-------------------------------------------------------------------------------------------------
 # for creating new user
