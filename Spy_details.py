@@ -18,5 +18,17 @@ class ChatMessage():
                 self.message = message
                 self.time = datetime.now()
                 self.sent_by_me = sent_by_me
+
+#Initial details for a default user
 spy = Spy('Nikita', 'Ms.', 20, 4.7)
 
+#List to store the status messages.
+STATUS_MESSAGE = ['Hi, I am Nikita Rana','I am a coding and designing enthusiast','I play Basketball']
+
+#Adding friends to avoid repetitive addition
+friend_one = Spy('Tony Stark', 'Mr.', 27, 4.7)
+friend_two = Spy('Loki Laufeyson', 'Mr.', 27, 4.9)
+friend_three = Spy('Dean Winchester', 'Ms.', 26, 4.5)
+
+# List of friends
+friends = [friend_one, friend_two, friend_three]
