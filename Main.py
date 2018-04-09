@@ -5,7 +5,7 @@
 from Spy_details import Spy, spy, STATUS_MESSAGE, friends, ChatMessage
 from steganography.steganography import Steganography
 from datetime import datetime
-
+import csv
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                            Function to add a status or update a status
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -65,6 +65,10 @@ def add_friend():
     if len ( new_friend.name) > 0 and new_friend.age> 12 and new_friend.rating>= spy.rating:
        if (new_friend.salutation=='ms.' or new_friend.salutation=='mr.' or new_friend.salutation=='Mr.' or new_friend.salutation=='Ms.'):
             friends.append ( new_friend )
+            with open ( 'friends.csv', 'a' ) as friends_data:
+                writer = csv.writer ( friends_data)
+                writer.writerow ( [spy.name, spy.saluation, spy.rating, spy.age, spy.is_online] )
+
     else:
         print('Sorry! Invalid entry. We can\'t add spy with the details you provided')
     return len ( friends )
@@ -113,6 +117,17 @@ def send_message():
   }
   friends[friend_choice]['chats'].append ( new_chat )
   print "Your secret message is ready!"
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                      Function for loading the from the friends
+#  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def load_friends():
+    with open ( 'friends.csv', 'rb' ) as friends_data:
+        reader = csv.reader ( friends_data )
+        for row in reader:
+            spy = Spy (name=row[0], salutation=row[1], rating=float ( row[2] ), age=int ( row[3] ) )
+            friends.append ( spy )
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                      Function for reading the message
@@ -237,6 +252,7 @@ def start_chat(spy):
         print("Your age:" + str ( spy.age ))
         print("Your rating:" + str ( spy.rating ))
         print(( "We are happy to have you on board."))
+        load_friends ()
     while show_menu:
 
         #Taking input choice from the given the set of menu options
@@ -340,9 +356,6 @@ if user_option == "new":
 
 #if user continues as a default user
 elif user_option == 'default':
-    print('Authentication Complete. We are glad to have you with us. Welcome ' + spy.salutation + '.' + spy.name + ", Your sp rating is " + str (
-            spy.rating ))  # float value to string value
-    spy_is_online = True
     start_chat (spy)  # calling menu option
 
 #if user selects neither new or default user
