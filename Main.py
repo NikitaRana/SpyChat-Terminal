@@ -2,9 +2,10 @@
 #                                             Import packages and python modules
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-from Spy_details import Spy, spy, STATUS_MESSAGE, friends, ChatMessage
+from Spy_details import Spy, spy, STATUS_MESSAGE, friends, ChatMessage,Image
 from steganography.steganography import Steganography
 from datetime import datetime
+from termcolor import colored
 import csv
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                            Function to add a status or update a status
@@ -47,7 +48,7 @@ def add_status_message():
         print("You did not update your current status")
 
     #updated status message is returned
-     return updated_status_message
+    return updated_status_message
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                           Function to add a friend
@@ -68,7 +69,6 @@ def add_friend():
             with open ( 'friends.csv', 'a' ) as friends_data:
                 writer = csv.writer ( friends_data)
                 writer.writerow ( [spy.name, spy.saluation, spy.rating, spy.age, spy.is_online] )
-
     else:
         print('Sorry! Invalid entry. We can\'t add spy with the details you provided')
     return len ( friends )
@@ -88,18 +88,65 @@ def select_friend():
         item_number = item_number + 1
 
     # Ask the user which friend he want to have a chat with
-    friend_choice = raw_input("Choose the index of the friend: ", "blue")
+    friend_choice = raw_input("Choose the index of the friend: ")
     # The friend will be selected
     friend_choice_position = int(friend_choice) - 1
 
     # Check if the user chooses index out of range
     if friend_choice_position + 1 > len(friends):
-        print("Sorry,This friend is not present.", 'red')
+        print("Sorry, the selected friend is not present.")
         exit()
 
     else:
         # returns the selected friend to perform the options
         return friend_choice_position
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                      Function for encrypting the message using Caeser Cipher
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def encrypt_caesar(plainText, shift):
+  cipherText = ""
+  for ch in plainText:
+      #if the alphabet is an alphabet
+    if ch.isalpha():
+      stayInAlphabet = ord(ch) + shift
+      #if the alphabet is z then return to the starting of the series
+      if stayInAlphabet > ord('z'):
+        stayInAlphabet -= 26
+      finalLetter = chr(stayInAlphabet)
+      cipherText += finalLetter
+  print("Your cipher text is: "+cipherText)
+  return cipherText
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                      Function for showcasing the encryption menu options
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def show_encryption_menu(plaintext)
+    print("Please select the encryption methods:")
+    while show_menu:
+        # Taking input choice from the given the set of menu options
+        menu_option = int ( raw_input (
+            " 1. Ceaser Cipher "
+            "\n 2. Encrypt each word in different image file ") )
+        #if user selects caeser ciper for encrypting entire text
+        if menu_option == 1:
+            return encrypt_caesar(plaintext,3)
+        #if user selects word by word ceaser ciper encryption in different images
+        elif menu_option == 2:
+            #the plain text string is split and converted to a list of substrings
+            splitted_text = plaintext.split()
+            #looping over each substrings of list
+            for word in splitted_text:
+                #returning encrypted cipher text of each word to the send_message
+                return encrypt_caesar(word,3)
+        else:
+            # Choice not selected from the given set of options
+            print("Invalid option select from 1 to 2")
+            exit ()
+
+
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                      Function for sending the message
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -107,16 +154,18 @@ def select_friend():
 def send_message():
   friend_choice = select_friend()
   original_image = raw_input("What is the name of the image?")
-  output_image = 'output_image.jpg'
+  output_image = raw_input("Please name the outfile file : *.jpg")
   text = raw_input("What do you want to say?")
-  Steganography.encode(original_image, output_image, text)
+  sender_text = show_encryption_menu(text)
+  Steganography.encode(original_image, output_image, sender_text)
   new_chat = {
-      "message": text,
+      "message": sender_text,
       "time": datetime.now (),
       "sent_by_me": True
   }
   friends[friend_choice]['chats'].append ( new_chat )
   print "Your secret message is ready!"
+
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                      Function for loading the from the friends
@@ -128,6 +177,39 @@ def load_friends():
         for row in reader:
             spy = Spy (name=row[0], salutation=row[1], rating=float ( row[2] ), age=int ( row[3] ) )
             friends.append ( spy )
+            print(friends)
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                      Function for loading the chats with friends
+#  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+# def load_friends():
+#     with open ( 'chats.csv', 'rb' ) as chats_data:
+#         reader = csv.reader ( chats_data )
+#         for row in reader:
+#             new_chat = ChatMessage (message=row[0], time=row[1], sent_by_me=row[2])
+#             friends.append ( spy )
+#             print(friends)
+
+
+
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+#                                      Function for encrypting the message using Caeser Cipher
+# -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+def decrypt_caesar(cipherText, shift):
+  plainText = ""
+  for ch in cipherText:
+      #if the alphabet is an alphabet
+    if ch.isalpha():
+      stayInAlphabet = ord(ch) - shift
+      #if the alphabet is z then return to the starting of the series
+      if stayInAlphabet < ord('a'):
+        stayInAlphabet += 26
+      finalLetter = chr(stayInAlphabet)
+      plainText += finalLetter
+  print("Your plain text is: "+plainText)
+  return cipherText
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                      Function for reading the message
@@ -135,13 +217,13 @@ def load_friends():
 
 def read_message():
     sender = select_friend ()
-    output_path = raw_input ( "What is the name of the file?" )
+    output_path = raw_input ( "Please write the name of the file?" )
 
     # usage of error handling to check if the image contains a hidden text or not
     try:
         secret_text = Steganography.decode ( output_path )
-        print "The secret message is ",
-        print ( secret_text, 'red' )
+        print("The secret message is ")
+        print (secret_text)
         words = secret_text.split ()
 
         #convert all the words to uppercase and split them
@@ -153,48 +235,52 @@ def read_message():
         #if friends send any emergency words in their message
         if "SOS" in new_secret_message or "SAVE" in new_secret_message or "HELP" in new_secret_message or "RESCUE" in new_secret_message:
             # Emergency alert
-            print( "!", 'grey', 'on_yellow' ),
-            print( "!", 'grey', 'on_yellow' ),
-            print( "!", 'grey', 'on_yellow' )
+            print(colored("!", 'grey', 'on_yellow')),
+            print(colored("!", 'grey', 'on_yellow')),
+            print(colored("!", 'grey', 'on_yellow'))
 
             # Help your friend by sending him a helping message
-            print ( "Your spy friend seems to be in an emergency..", 'red' )
-            print ( "Send him a suitable message", 'red' )
-            print ( "Select that friend to send him a helping message.", 'green' )
+            print ( "Your spy friend seems to be in an emergency..")
+            print ( "Send him a suitable message")
+            print ( "Select that friend to send him a helping message.")
 
             # Calling the send message help function
             send_emergency_message ()
             # The message is sent successfully
-            print( "You have sent a message to help your friend.", 'green' )
+            print( "You have sent a message to help your friend.")
 
             # Adding the chat with the sender
             new_chat = ChatMessage ( secret_text, False )
             friends[sender].chats.append ( new_chat )
+
         else:
             # Adding the chat with the sender
             new_chat = ChatMessage ( secret_text, False )
             friends[sender].chats.append ( new_chat )
-            print( "Your secret message has been saved!", 'yellow' )
+            print( "Your secret message has been saved!")
 
-
+        #storing the chat details with each spy
         friends[sender]['chats'].append ( new_chat )
+
+        #storing the chat details with each file to chats.csv
+        with open ( 'chats.csv', 'a' ) as chats_data:
+            writer = csv.writer ( chats_data )
+            #string under the headers: friend, message, time , sent by me(as in the user)
+            writer.writerow ( [friends[sender], new_chat.message,new_chat.time,new_chat.sent_by_me] )
+
         print "Your secret message has been saved!"
-        # Print the avg words spoken by your friend
-        print "Average words said by",
-        print(friends[sender].name, "blue"),
-        print "is",
-        print(friends[sender].count, "red")
+        # Print the number of words spoken by your friend
+        print("Average words said by"+friends[sender].name+"is"+friends[sender].count)
 
         # Delete a spy from your list of spies if they are speaking too much
         if len(words) > 100:
-            print((friends[sender].name, 'blue')),
-            print("removed from friends list.What a chatter box!.What a drag!!!", "yellow")
-            # Removes that friend who talks too much
+            print(friends[sender].name+"removed from the friend\'s list.")
+            # Removal of a friend who is speaking way too much
             friends.remove(friends[sender])
 
-    #when no text is hidden inside image
+    #The image doesnt contain any hidden text
     except TypeError:
-        print( "Nothing to decode from the image as it contains no secret message.", 'red' )
+        print( "Nothing to decode from the image as it contains no secret message.")
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                   Function to read chat history with spy
@@ -204,23 +290,20 @@ def read_chat_history():
     #read_for stores the value returned by select_a_friend()
     read_for = select_friend()
 
-    print '\n'
     #iterating through friends chats list
     for chat in friends[read_for].chats:
         if chat.sent_by_me:#when True
-            # The date and time is printed in blue
-            print(str(chat.time.strftime("%d %B %Y %A %H:%M")) + ",", 'blue'),
-            # The message is printed in red
-            print("You said:", 'red'),
-            # black is by default
-            print str(chat.message)
+            # The date and time is printed
+            print(str(chat.time.strftime("%d %B %Y %A %H:%M")) + ","),
+            # The message is printed
+            print("You said:"+str(chat.message))
         else:#when False
             # The date and time is printed in blue
-            print(str(chat.time.strftime("%d %B %Y %A %H:%M")) + ",", 'blue'),
+            print(colored(str(chat.time.strftime("%d %B %Y %A %H:%M","blue"))) + ","),
             # The message is printed in red
-            print(str(friends[read_for].name) + " said:", 'red'),
+            print(colored(str(friends[read_for].name) + " said:","red")),
             # Black color is by default
-            print str(chat.message)
+            print(str(chat.message))
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                                   Function to send a message in case of emergency

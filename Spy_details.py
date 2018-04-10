@@ -13,11 +13,27 @@ class Spy:
                 self.is_online = True
                 self.chats = []
                 self.current_status_message = None
-class ChatMessage():
+class ChatMessage:
         def __init__(self, message, time, sent_by_me):
                 self.message = message
                 self.time = datetime.now()
                 self.sent_by_me = sent_by_me
+
+# class Image:
+#         def __init__(self,original_image, hidden_text, output_image):
+#                 self.original_image = original_image
+#                 self.hidden_text = hidden_text
+#                 self.output_image = output_image
+#         def get_image_values(self):
+#                 self.original_image = raw_input("Please enter the name of the original image: ")
+#                 self.hidden_text = raw_input("Please enter the text to be hidden inside image: ")
+#                 self.output_image = raw_input("Please enter the name of the output encoded file: ")
+
+class Image:
+        def __init__(self, original_image, hidden_text, output_image):
+                self.original_image = raw_input("Please enter the name of the original image: " )
+                self.hidden_text = raw_input("Please enter the text to be hidden inside image: " )
+                self.output_image = raw_input("Please enter the name of the output encoded file: " )
 
 #Initial details for a default user
 spy = Spy('Nikita', 'Ms.', 20, 4.7)
