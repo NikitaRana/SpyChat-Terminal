@@ -16,7 +16,8 @@ class Spy:
 class ChatMessage:
         def __init__(self, message, time, sent_by_me):
                 self.message = message
-                self.time = datetime.now()
+                now = datetime.now()
+                self.time = now.strftime("%Y")
                 self.sent_by_me = sent_by_me
 
 # class Image:

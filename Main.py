@@ -123,13 +123,14 @@ def encrypt_caesar(plainText, shift):
 #                                      Function for showcasing the encryption menu options
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-def show_encryption_menu(plaintext)
+def show_encryption_menu(plaintext):
+    encypted_words = []
     print("Please select the encryption methods:")
     while show_menu:
         # Taking input choice from the given the set of menu options
         menu_option = int ( raw_input (
-            " 1. Ceaser Cipher "
-            "\n 2. Encrypt each word in different image file ") )
+            " 1. Encrypt entire text using Ceaser Cipher "
+            "\n 2. Encrypt each word in different image file using caeser cipher``") )
         #if user selects caeser ciper for encrypting entire text
         if menu_option == 1:
             return encrypt_caesar(plaintext,3)
@@ -140,7 +141,8 @@ def show_encryption_menu(plaintext)
             #looping over each substrings of list
             for word in splitted_text:
                 #returning encrypted cipher text of each word to the send_message
-                return encrypt_caesar(word,3)
+                encypted_words = encrypt_caesar(word,3)
+            return encypted_words
         else:
             # Choice not selected from the given set of options
             print("Invalid option select from 1 to 2")
@@ -153,11 +155,14 @@ def show_encryption_menu(plaintext)
 
 def send_message():
   friend_choice = select_friend()
+  ecrypted_words = []
   original_image = raw_input("What is the name of the image?")
   output_image = raw_input("Please name the outfile file : *.jpg")
   text = raw_input("What do you want to say?")
-  sender_text = show_encryption_menu(text)
-  Steganography.encode(original_image, output_image, sender_text)
+  encrypted_words = show_encryption_menu(text)
+  for words in range ( len ( encrypted_words ) ):
+    Steganography.encode(original_image, output_image, words)
+    words = words+1
   new_chat = {
       "message": sender_text,
       "time": datetime.now (),
@@ -183,15 +188,13 @@ def load_friends():
 #                                      Function for loading the chats with friends
 #  -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-# def load_friends():
-#     with open ( 'chats.csv', 'rb' ) as chats_data:
-#         reader = csv.reader ( chats_data )
-#         for row in reader:
-#             new_chat = ChatMessage (message=row[0], time=row[1], sent_by_me=row[2])
-#             friends.append ( spy )
-#             print(friends)
-
-
+def load_chats():
+    with open ( 'chats.csv', 'rb' ) as chats_data:
+        reader = csv.reader ( chats_data )
+        for row in reader:
+            new_chat = ChatMessage (message=row[0], time=row[1], sent_by_me=row[2])
+            friends.append ( new_chat )
+            print(friends)
 
 # -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 #                                      Function for encrypting the message using Caeser Cipher
@@ -335,7 +338,9 @@ def start_chat(spy):
         print("Your age:" + str ( spy.age ))
         print("Your rating:" + str ( spy.rating ))
         print(( "We are happy to have you on board."))
-        load_friends ()
+        load_friends()
+        load_chats()
+    
     while show_menu:
 
         #Taking input choice from the given the set of menu options
