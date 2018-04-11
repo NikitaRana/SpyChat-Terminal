@@ -162,7 +162,6 @@ def send_message():
   encrypted_words = show_encryption_menu(text)
   for words in range ( len ( encrypted_words ) ):
     Steganography.encode(original_image, output_image, words)
-    words = words+1
   new_chat = {
       "message": sender_text,
       "time": datetime.now (),
